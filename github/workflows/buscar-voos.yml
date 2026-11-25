@@ -2,7 +2,7 @@ name: Buscar voos
 
 on:
   schedule:
-    - cron: "43 9 * * *"   # todo dia às 06:43 no horário de Fortaleza (09:43 UTC)
+    - cron: "43 9,21 * * *"   # todo dia às 06:43 e 18:43 no horário de Fortaleza
   workflow_dispatch:         # botão "Run workflow" para rodar na hora
 
 permissions:
