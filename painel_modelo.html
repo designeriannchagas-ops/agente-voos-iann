@@ -190,9 +190,9 @@ function iniciar() {
   function desenharEvolucao() {
     const combo = sel.value || null;
     const pts = coletas.map(c => melhorDaColeta(c, combo));
-    grafEvo.data.labels = coletas.map(c => dataHora(c.quando).slice(0, 5));
+    grafEvo.data.labels = coletas.map(c => dataHora(c.quando).replace(",", ""));
     grafEvo.data.datasets = [
-      { label: combo ? "Preço nessas datas" : "Melhor preço do dia", data: pts.map(p => p ? p.menor_preco : null),
+      { label: combo ? "Preço nessas datas" : "Melhor preço da busca", data: pts.map(p => p ? p.menor_preco : null),
         borderColor: cor, backgroundColor: corSoft, fill: true, borderWidth: 2, tension: .25,
         pointRadius: coletas.length > 40 ? 0 : 4, pointHoverRadius: 6, pointBackgroundColor: cor, pointBorderColor: sup, pointBorderWidth: 2, spanGaps: true },
     ];

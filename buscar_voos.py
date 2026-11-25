@@ -32,9 +32,17 @@ def carregar_json(caminho, padrao):
 
 
 def combinacoes_de_datas(cfg):
-    """Todas as combinações ida x volta que respeitam a duração mínima."""
+    """Pares ida/volta a pesquisar.
+
+    Se o config.json tiver "combinacoes" (lista de [ida, volta]), usa exatamente esses pares.
+    Senão, cruza datas_ida x datas_volta e descarta viagens mais curtas que dias_minimos.
+    """
+    if cfg.get("combinacoes"):
+        pares = [tuple(par) for par in cfg["combinacoes"]]
+    else:
+        pares = list(product(cfg["datas_ida"], cfg["datas_volta"]))
     combos = []
-    for ida, volta in product(cfg["datas_ida"], cfg["datas_volta"]):
+    for ida, volta in pares:
         dias = (date.fromisoformat(volta) - date.fromisoformat(ida)).days
         if dias >= cfg.get("dias_minimos", 1):
             combos.append((ida, volta, dias))
