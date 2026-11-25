@@ -1,0 +1,12 @@
+{
+  "origem": "FOR",
+  "destinos": "LIS,OPO,MAD",
+  "datas_ida": ["2027-05-10", "2027-05-11", "2027-05-12"],
+  "datas_volta": ["2027-05-25", "2027-05-26"],
+  "dias_minimos": 14,
+  "adultos": 1,
+  "classe": 1,
+  "paradas": 0,
+  "moeda": "BRL",
+  "preco_alvo": 3700
+}

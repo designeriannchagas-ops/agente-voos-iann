@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Agente de voos · Fortaleza → Europa</title>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.js"></script>
+<style>
+  :root {
+    color-scheme: light;
+    --bg: #f6f6f4; --surface-1: #ffffff; --border: #e4e4e0;
+    --text-primary: #191919; --text-secondary: #666666; --grid: #ececea;
+    --series-1: #257de0; --series-1-soft: rgba(37,125,224,.12);
+    --ref: #8a8a8a; --good: #0a7d24; --good-bg: #e5f4e8;
+    --warn: #9a6400; --warn-bg: #fbf1dc; --bad: #c03030; --bad-bg: #fbe7e7;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      color-scheme: dark;
+      --bg: #111111; --surface-1: #191919; --border: #2e2e2e;
+      --text-primary: #efefef; --text-secondary: #9c9c9c; --grid: #2a2a2a;
+      --series-1: #338ced; --series-1-soft: rgba(51,140,237,.16);
+      --ref: #8a8a8a; --good: #4fc56a; --good-bg: #16301c;
+      --warn: #e2ac3c; --warn-bg: #33280f; --bad: #ef7676; --bad-bg: #3a1a1a;
+    }
+  }
+  * { box-sizing: border-box; }
+  body { margin: 0; background: var(--bg); color: var(--text-primary);
+         font: 15px/1.45 system-ui, -apple-system, "Segoe UI", Roboto, sans-serif; }
+  main { max-width: 1100px; margin: 0 auto; padding: 28px 20px 60px; }
+  header h1 { font-size: 24px; margin: 0 0 4px; }
+  header p { margin: 0; color: var(--text-secondary); }
+  .grid { display: grid; gap: 14px; }
+  .kpis { grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); margin: 22px 0; }
+  .card { background: var(--surface-1); border: 1px solid var(--border); border-radius: 12px; padding: 16px 18px; }
+  .kpi .rotulo { color: var(--text-secondary); font-size: 13px; }
+  .kpi .valor { font-size: 28px; font-weight: 650; margin: 2px 0; font-variant-numeric: tabular-nums; }
+  .kpi .det { color: var(--text-secondary); font-size: 13px; }
+  .selo { display: inline-block; padding: 1px 8px; border-radius: 999px; font-size: 13px; font-weight: 600; }
+  .selo.bom { color: var(--good); background: var(--good-bg); }
+  .selo.medio { color: var(--warn); background: var(--warn-bg); }
+  .selo.ruim { color: var(--bad); background: var(--bad-bg); }
+  h2 { font-size: 16px; margin: 0 0 2px; }
+  .sub { color: var(--text-secondary); font-size: 13px; margin: 0 0 12px; }
+  .graf { position: relative; height: 300px; }
+  .dois { grid-template-columns: repeat(auto-fit, minmax(420px, 1fr)); margin-top: 14px; }
+  .filtros { display: flex; gap: 10px; align-items: center; margin-bottom: 10px; flex-wrap: wrap; }
+  select { font: inherit; padding: 5px 8px; border-radius: 8px; border: 1px solid var(--border);
+           background: var(--surface-1); color: var(--text-primary); }
+  table { width: 100%; border-collapse: collapse; font-size: 14px; }
+  th, td { text-align: left; padding: 8px 6px; border-bottom: 1px solid var(--border); vertical-align: top; }
+  th { color: var(--text-secondary); font-weight: 500; font-size: 13px; }
+  td.num { font-variant-numeric: tabular-nums; font-weight: 600; white-space: nowrap; }
+  a { color: var(--series-1); }
+  .vazio { color: var(--text-secondary); padding: 30px 0; text-align: center; }
+  footer { color: var(--text-secondary); font-size: 12px; margin-top: 26px; }
+  @media (max-width: 520px) { .dois { grid-template-columns: 1fr; } .ocultar-cel { display: none; } }
+</style>
+</head>
+<body>
+<main>
+  <header>
+    <h1 id="titulo">Fortaleza → Europa</h1>
+    <p id="subtitulo"></p>
+  </header>
+
+  <section class="grid kpis" id="kpis"></section>
+
+  <section class="card">
+    <h2>Evolução do preço</h2>
+    <p class="sub">Menor preço ida e volta encontrado em cada coleta, para 1 adulto. A linha tracejada é o seu preço alvo.</p>
+    <div class="filtros">
+      <label for="filtroCombo">Datas:</label>
+      <select id="filtroCombo"></select>
+    </div>
+    <div class="graf"><canvas id="grafEvolucao" aria-label="Evolução do menor preço por coleta"></canvas></div>
+  </section>
+
+  <section class="grid dois">
+    <div class="card">
+      <h2>Preço agora por combinação de datas</h2>
+      <p class="sub">Menor preço de cada par ida/volta na coleta mais recente (da mais barata para a mais cara).</p>
+      <div class="graf"><canvas id="grafCombos" aria-label="Preço atual por combinação de datas"></canvas></div>
+    </div>
+    <div class="card">
+      <h2>Histórico do Google Flights</h2>
+      <p class="sub" id="subGoogle">Últimos ~60 dias de preço que o próprio Google registrou para as datas mais baratas.</p>
+      <div class="graf"><canvas id="grafGoogle" aria-label="Histórico de preço do Google Flights"></canvas></div>
+    </div>
+  </section>
+
+  <section class="card" style="margin-top:14px">
+    <h2>Melhores ofertas agora</h2>
+    <p class="sub">As opções mais baratas da última coleta. O preço é ida e volta; os voos mostrados são os de ida.</p>
+    <div style="overflow-x:auto"><table id="tabela"></table></div>
+  </section>
+
+  <footer id="rodape"></footer>
+</main>
+
+<script>
+const HIST = {"coletas": []};
+
+const css = n => getComputedStyle(document.documentElement).getPropertyValue(n).trim();
+const brl = v => v == null ? "–" : "R$ " + Math.round(v).toLocaleString("pt-BR");
+const dataBR = iso => { const [a, m, d] = iso.slice(0, 10).split("-"); return `${d}/${m}`; };
+const dataHora = iso => new Date(iso).toLocaleString("pt-BR", { day: "2-digit", month: "2-digit", hour: "2-digit", minute: "2-digit", timeZone: "America/Fortaleza" });
+const horas = min => min == null ? "–" : `${Math.floor(min / 60)}h${String(min % 60).padStart(2, "0")}`;
+const chaveCombo = r => `${r.ida}|${r.volta}`;
+const nomeCombo = r => `${dataBR(r.ida)} → ${dataBR(r.volta)} (${r.dias} dias)`;
+const esc = s => String(s ?? "").replace(/[&<>"]/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
+
+function nivel(n) {
+  const t = (n || "").toLowerCase();
+  if (t.startsWith("low") || t.startsWith("baix")) return ["Baixo", "bom"];
+  if (t.startsWith("high") || t.startsWith("alt")) return ["Alto", "ruim"];
+  if (t) return ["Típico", "medio"];
+  return null;
+}
+
+function melhorDaColeta(c, combo) {
+  const rs = c.resultados.filter(r => r.menor_preco && (!combo || chaveCombo(r) === combo));
+  return rs.length ? rs.reduce((a, b) => (b.menor_preco < a.menor_preco ? b : a)) : null;
+}
+
+function iniciar() {
+  if (!HIST || !HIST.coletas || !HIST.coletas.length) {
+    document.getElementById("kpis").innerHTML = '<div class="card vazio" style="grid-column:1/-1">Ainda não há coletas. O painel se preenche depois da primeira busca.</div>';
+    return;
+  }
+  const cfg = HIST.config || {};
+  const coletas = HIST.coletas;
+  const ultima = coletas[coletas.length - 1];
+  const anterior = coletas.length > 1 ? coletas[coletas.length - 2] : null;
+  const melhor = melhorDaColeta(ultima);
+  const alvo = cfg.preco_alvo;
+
+  document.getElementById("titulo").textContent = `${cfg.origem || "FOR"} → ${(cfg.destinos || "").replaceAll(",", " / ")} · maio de 2027`;
+  document.getElementById("subtitulo").textContent =
+    `Ida e volta, ${cfg.adultos || 1} adulto · atualizado em ${dataHora(ultima.quando)} · ${coletas.length} coleta(s)`;
+
+  // ---------- KPIs ----------
+  let menorJa = null;
+  coletas.forEach(c => { const m = melhorDaColeta(c); if (m && (!menorJa || m.menor_preco < menorJa.r.menor_preco)) menorJa = { r: m, quando: c.quando }; });
+  const melhorAnt = anterior ? melhorDaColeta(anterior) : null;
+  const dif = melhorAnt ? melhor.menor_preco - melhorAnt.menor_preco : null;
+  const of = (melhor.ofertas || [])[0] || {};
+  const nv = nivel(melhor.nivel_preco);
+  const faixa = melhor.faixa_tipica;
+
+  const kpis = [
+    { r: "Melhor preço agora", v: brl(melhor.menor_preco),
+      d: `${nomeCombo(melhor)}<br>${esc((of.companhias || []).join(", "))} · ${of.paradas === 0 ? "voo direto" : (of.paradas ?? "–") + " parada(s)"} · <a href="${esc(melhor.link)}" target="_blank" rel="noopener">ver no Google</a>` },
+    { r: "Desde a coleta anterior",
+      v: dif == null ? "–" : (dif === 0 ? "igual" : (dif < 0 ? "▼ " : "▲ ") + brl(Math.abs(dif))),
+      d: dif == null ? "Precisa de pelo menos 2 coletas" : (dif < 0 ? "Caiu" : dif > 0 ? "Subiu" : "Sem mudança") + ` (antes ${brl(melhorAnt.menor_preco)})` },
+    { r: "Menor preço já visto", v: brl(menorJa.r.menor_preco), d: `em ${dataHora(menorJa.quando)}<br>${nomeCombo(menorJa.r)}` },
+    { r: "Avaliação do Google", v: nv ? `<span class="selo ${nv[1]}">${nv[0]}</span>` : "–",
+      d: faixa ? `Faixa típica: ${brl(faixa[0])} a ${brl(faixa[1])}` : "Sem faixa típica informada" },
+    { r: "Seu preço alvo", v: brl(alvo),
+      d: alvo ? (melhor.menor_preco <= alvo ? '<span class="selo bom">Atingido</span>' : `Faltam ${brl(melhor.menor_preco - alvo)}`) : "Defina em config.json" },
+  ];
+  document.getElementById("kpis").innerHTML = kpis.map(k =>
+    `<div class="card kpi"><div class="rotulo">${k.r}</div><div class="valor">${k.v}</div><div class="det">${k.d}</div></div>`).join("");
+
+  // ---------- Chart.js padrões ----------
+  Chart.defaults.font.family = getComputedStyle(document.body).fontFamily;
+  Chart.defaults.color = css("--text-secondary");
+  Chart.defaults.borderColor = css("--grid");
+  const cor = css("--series-1"), corSoft = css("--series-1-soft"), corRef = css("--ref"), sup = css("--surface-1");
+  const tooltip = { backgroundColor: css("--surface-1"), titleColor: css("--text-primary"), bodyColor: css("--text-primary"),
+                    borderColor: css("--border"), borderWidth: 1, padding: 10, callbacks: { label: c => `${c.dataset.label}: ${brl(c.parsed.y ?? c.parsed.x)}` } };
+  const eixoPreco = { ticks: { callback: v => brl(v) }, grid: { color: css("--grid") }, border: { display: false } };
+
+  // ---------- Evolução ----------
+  const combos = [];
+  coletas.forEach(c => c.resultados.forEach(r => { if (!combos.find(x => chaveCombo(x) === chaveCombo(r))) combos.push(r); }));
+  combos.sort((a, b) => chaveCombo(a).localeCompare(chaveCombo(b)));
+  const sel = document.getElementById("filtroCombo");
+  sel.innerHTML = '<option value="">Melhor entre todas as datas</option>' +
+    combos.map(r => `<option value="${chaveCombo(r)}">${nomeCombo(r)}</option>`).join("");
+
+  const grafEvo = new Chart(document.getElementById("grafEvolucao"), {
+    type: "line",
+    data: { labels: [], datasets: [] },
+    options: { maintainAspectRatio: false, interaction: { mode: "index", intersect: false },
+      plugins: { legend: { labels: { usePointStyle: true, boxWidth: 8 } }, tooltip },
+      scales: { y: eixoPreco, x: { grid: { display: false } } } }
+  });
+  function desenharEvolucao() {
+    const combo = sel.value || null;
+    const pts = coletas.map(c => melhorDaColeta(c, combo));
+    grafEvo.data.labels = coletas.map(c => dataHora(c.quando).slice(0, 5));
+    grafEvo.data.datasets = [
+      { label: combo ? "Preço nessas datas" : "Melhor preço do dia", data: pts.map(p => p ? p.menor_preco : null),
+        borderColor: cor, backgroundColor: corSoft, fill: true, borderWidth: 2, tension: .25,
+        pointRadius: coletas.length > 40 ? 0 : 4, pointHoverRadius: 6, pointBackgroundColor: cor, pointBorderColor: sup, pointBorderWidth: 2, spanGaps: true },
+    ];
+    if (alvo) grafEvo.data.datasets.push({ label: "Preço alvo", data: coletas.map(() => alvo),
+      borderColor: corRef, borderDash: [6, 5], borderWidth: 1.5, pointRadius: 0, fill: false });
+    grafEvo.update();
+  }
+  sel.addEventListener("change", desenharEvolucao);
+  desenharEvolucao();
+
+  // ---------- Preço por combinação ----------
+  const atuais = ultima.resultados.filter(r => r.menor_preco).sort((a, b) => a.menor_preco - b.menor_preco);
+  new Chart(document.getElementById("grafCombos"), {
+    type: "line",
+    data: { labels: atuais.map(nomeCombo),
+      datasets: [{ label: "Menor preço", data: atuais.map(r => r.menor_preco), showLine: false,
+                   pointRadius: 7, pointHoverRadius: 9, pointBackgroundColor: cor, pointBorderColor: sup, pointBorderWidth: 2 }] },
+    options: { indexAxis: "y", maintainAspectRatio: false,
+      plugins: { legend: { display: false }, tooltip },
+      layout: { padding: { right: 12 } },
+      scales: { x: { ...eixoPreco, grace: "5%", ticks: { ...eixoPreco.ticks, maxRotation: 0, maxTicksLimit: 5 } },
+                y: { grid: { color: css("--grid") }, border: { display: false } } } }
+  });
+
+  // ---------- Histórico do Google ----------
+  const hg = (melhor.historico_google || []).filter(p => p && p[1]);
+  if (hg.length) {
+    document.getElementById("subGoogle").textContent = `Preço que o próprio Google registrou nos últimos dias para ${nomeCombo(melhor)}.`;
+    new Chart(document.getElementById("grafGoogle"), {
+      type: "line",
+      data: { labels: hg.map(p => new Date(p[0] * 1000).toLocaleDateString("pt-BR", { day: "2-digit", month: "2-digit" })),
+        datasets: [{ label: "Preço no Google", data: hg.map(p => p[1]), borderColor: cor, borderWidth: 2, pointRadius: 0,
+                     pointHoverRadius: 5, tension: .2, fill: false }] },
+      options: { maintainAspectRatio: false, interaction: { mode: "index", intersect: false },
+        plugins: { legend: { display: false }, tooltip }, scales: { y: eixoPreco, x: { grid: { display: false }, ticks: { maxTicksLimit: 8 } } } }
+    });
+  } else {
+    document.getElementById("grafGoogle").parentElement.innerHTML = '<div class="vazio">O Google não informou histórico para essas datas.</div>';
+  }
+
+  // ---------- Tabela ----------
+  const linhas = [];
+  ultima.resultados.forEach(r => (r.ofertas || []).forEach(o => linhas.push({ r, o })));
+  linhas.sort((a, b) => a.o.preco - b.o.preco);
+  const erros = ultima.resultados.filter(r => r.erro);
+  document.getElementById("tabela").innerHTML =
+    `<thead><tr><th>Preço</th><th>Datas</th><th>Companhia</th><th>Destino</th><th>Paradas</th><th class="ocultar-cel">Duração da ida</th><th class="ocultar-cel">Partida</th><th></th></tr></thead><tbody>` +
+    linhas.slice(0, 12).map(({ r, o }) => `<tr>
+      <td class="num">${brl(o.preco)}</td><td>${nomeCombo(r)}</td><td>${esc(o.companhias.join(", "))}</td>
+      <td>${esc(o.destino)}</td><td>${o.paradas === 0 ? "Direto" : o.paradas + " (" + esc(o.escalas.join(", ")) + ")"}</td>
+      <td class="ocultar-cel">${horas(o.duracao_min)}</td><td class="ocultar-cel">${esc((o.partida || "").slice(11))}</td>
+      <td><a href="${esc(r.link)}" target="_blank" rel="noopener">Abrir</a></td></tr>`).join("") + "</tbody>";
+
+  document.getElementById("rodape").innerHTML =
+    `Fonte: Google Flights via SerpApi. Preços podem mudar a qualquer momento; confirme sempre no site antes de comprar.` +
+    (erros.length ? `<br>Na última coleta, ${erros.length} combinação(ões) de datas falharam: ${erros.map(e => esc(nomeCombo(e) + ": " + e.erro)).join("; ")}` : "");
+}
+iniciar();
+</script>
+</body>
+</html>
