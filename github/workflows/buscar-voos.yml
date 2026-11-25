@@ -1,0 +1,46 @@
+name: Buscar voos
+
+on:
+  schedule:
+    - cron: "43 9 * * *"   # todo dia às 06:43 no horário de Fortaleza (09:43 UTC)
+  workflow_dispatch:         # botão "Run workflow" para rodar na hora
+
+permissions:
+  contents: write
+  issues: write
+
+concurrency:
+  group: buscar-voos
+  cancel-in-progress: false
+
+jobs:
+  buscar:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Pesquisar preços no Google Flights
+        env:
+          SERPAPI_KEY: ${{ secrets.SERPAPI_KEY }}
+        run: python buscar_voos.py
+
+      - name: Atualizar painel
+        run: python gerar_painel.py
+
+      - name: Salvar histórico e painel
+        run: |
+          git config user.name "agente-voos"
+          git config user.email "agente-voos@users.noreply.github.com"
+          git add dados/historico.json docs/index.html
+          git diff --cached --quiet || git commit -m "Coleta de preços $(date -u +%Y-%m-%d)"
+          git push
+
+      - name: Avisar se o preço bateu o alvo
+        if: hashFiles('alerta.md') != ''
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: gh issue create --title "✈️ Preço abaixo do alvo!" --body-file alerta.md --assignee "${{ github.repository_owner }}"
