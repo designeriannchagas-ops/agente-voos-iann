@@ -1343,7 +1343,6 @@
      "menor_preco": 4031,
      "nivel_preco": null,
      "faixa_tipica": null,
-     "historico_google": [],
      "ofertas": [
       {
        "preco": 4031,
@@ -1436,7 +1435,6 @@
      "menor_preco": 3982,
      "nivel_preco": null,
      "faixa_tipica": null,
-     "historico_google": [],
      "ofertas": [
       {
        "preco": 3982,
@@ -1529,7 +1527,6 @@
      "menor_preco": 4031,
      "nivel_preco": null,
      "faixa_tipica": null,
-     "historico_google": [],
      "ofertas": [
       {
        "preco": 4031,
@@ -1613,6 +1610,294 @@
        "voos": [
         "AF 415",
         "AF 1528"
+       ]
+      }
+     ],
+     "link": "https://www.google.com/travel/flights?hl=pt-br&gl=br&curr=BRL&tfs=CBwQAhowEgoyMDI3LTA1LTExagcIARIDRk9ScgcIARIDTElTcgcIARIDT1BPcgcIARIDTUFEGjASCjIwMjctMDUtMjZqBwgBEgNMSVNqBwgBEgNPUE9qBwgBEgNNQURyBwgBEgNGT1JAAUgBcAGYAQE&tfu=EgIIAQ"
+    }
+   ]
+  },
+  {
+   "quando": "2026-11-28T17:48:25+00:00",
+   "resultados": [
+    {
+     "ida": "2027-05-11",
+     "volta": "2027-05-25",
+     "dias": 14,
+     "menor_preco": 3850,
+     "nivel_preco": null,
+     "faixa_tipica": null,
+     "historico_google": [],
+     "ofertas": [
+      {
+       "preco": 3850,
+       "companhias": [
+        "Tap Air Portugal"
+       ],
+       "paradas": 0,
+       "escalas": [],
+       "duracao_min": 440,
+       "partida": "2027-05-11 22:55",
+       "chegada": "2027-05-12 10:15",
+       "destino": "LIS",
+       "voos": [
+        "TP 36"
+       ]
+      },
+      {
+       "preco": 3976,
+       "companhias": [
+        "Tap Air Portugal"
+       ],
+       "paradas": 1,
+       "escalas": [
+        "LIS"
+       ],
+       "duracao_min": 685,
+       "partida": "2027-05-11 22:55",
+       "chegada": "2027-05-12 15:20",
+       "destino": "MAD",
+       "voos": [
+        "TP 36",
+        "TP 1014"
+       ]
+      },
+      {
+       "preco": 4038,
+       "companhias": [
+        "Tap Air Portugal"
+       ],
+       "paradas": 1,
+       "escalas": [
+        "LIS"
+       ],
+       "duracao_min": 725,
+       "partida": "2027-05-11 22:55",
+       "chegada": "2027-05-12 15:00",
+       "destino": "OPO",
+       "voos": [
+        "TP 36",
+        "TP 1928"
+       ]
+      },
+      {
+       "preco": 4467,
+       "companhias": [
+        "LATAM"
+       ],
+       "paradas": 0,
+       "escalas": [],
+       "duracao_min": 415,
+       "partida": "2027-05-11 06:30",
+       "chegada": "2027-05-11 17:25",
+       "destino": "LIS",
+       "voos": [
+        "LA 8150"
+       ]
+      },
+      {
+       "preco": 5106,
+       "companhias": [
+        "Iberia"
+       ],
+       "paradas": 0,
+       "escalas": [],
+       "duracao_min": 470,
+       "partida": "2027-05-11 16:55",
+       "chegada": "2027-05-12 05:45",
+       "destino": "MAD",
+       "voos": [
+        "IB 150"
+       ]
+      }
+     ],
+     "link": "https://www.google.com/travel/flights?hl=pt-br&gl=br&curr=BRL&tfs=CBwQAhowEgoyMDI3LTA1LTExagcIARIDRk9ScgcIARIDTElTcgcIARIDT1BPcgcIARIDTUFEGjASCjIwMjctMDUtMjVqBwgBEgNMSVNqBwgBEgNPUE9qBwgBEgNNQURyBwgBEgNGT1JAAUgBcAGYAQE&tfu=EgIIAQ"
+    },
+    {
+     "ida": "2027-05-10",
+     "volta": "2027-05-25",
+     "dias": 15,
+     "menor_preco": 3850,
+     "nivel_preco": null,
+     "faixa_tipica": null,
+     "historico_google": [],
+     "ofertas": [
+      {
+       "preco": 3850,
+       "companhias": [
+        "Tap Air Portugal"
+       ],
+       "paradas": 0,
+       "escalas": [],
+       "duracao_min": 440,
+       "partida": "2027-05-10 22:55",
+       "chegada": "2027-05-11 10:15",
+       "destino": "LIS",
+       "voos": [
+        "TP 36"
+       ]
+      },
+      {
+       "preco": 3976,
+       "companhias": [
+        "Tap Air Portugal"
+       ],
+       "paradas": 1,
+       "escalas": [
+        "LIS"
+       ],
+       "duracao_min": 685,
+       "partida": "2027-05-10 22:55",
+       "chegada": "2027-05-11 15:20",
+       "destino": "MAD",
+       "voos": [
+        "TP 36",
+        "TP 1014"
+       ]
+      },
+      {
+       "preco": 4061,
+       "companhias": [
+        "Tap Air Portugal"
+       ],
+       "paradas": 1,
+       "escalas": [
+        "LIS"
+       ],
+       "duracao_min": 1715,
+       "partida": "2027-05-10 22:55",
+       "chegada": "2027-05-12 07:30",
+       "destino": "OPO",
+       "voos": [
+        "TP 36",
+        "TP 1920"
+       ]
+      },
+      {
+       "preco": 4441,
+       "companhias": [
+        "Iberia"
+       ],
+       "paradas": 0,
+       "escalas": [],
+       "duracao_min": 470,
+       "partida": "2027-05-10 16:55",
+       "chegada": "2027-05-11 05:45",
+       "destino": "MAD",
+       "voos": [
+        "IB 150"
+       ]
+      },
+      {
+       "preco": 4472,
+       "companhias": [
+        "LATAM"
+       ],
+       "paradas": 0,
+       "escalas": [],
+       "duracao_min": 415,
+       "partida": "2027-05-10 06:05",
+       "chegada": "2027-05-10 17:00",
+       "destino": "LIS",
+       "voos": [
+        "LA 8150"
+       ]
+      }
+     ],
+     "link": "https://www.google.com/travel/flights?hl=pt-br&gl=br&curr=BRL&tfs=CBwQAhowEgoyMDI3LTA1LTEwagcIARIDRk9ScgcIARIDTElTcgcIARIDT1BPcgcIARIDTUFEGjASCjIwMjctMDUtMjVqBwgBEgNMSVNqBwgBEgNPUE9qBwgBEgNNQURyBwgBEgNGT1JAAUgBcAGYAQE&tfu=EgIIAQ"
+    },
+    {
+     "ida": "2027-05-11",
+     "volta": "2027-05-26",
+     "dias": 15,
+     "menor_preco": 3850,
+     "nivel_preco": null,
+     "faixa_tipica": null,
+     "historico_google": [],
+     "ofertas": [
+      {
+       "preco": 3850,
+       "companhias": [
+        "Tap Air Portugal"
+       ],
+       "paradas": 0,
+       "escalas": [],
+       "duracao_min": 440,
+       "partida": "2027-05-11 22:55",
+       "chegada": "2027-05-12 10:15",
+       "destino": "LIS",
+       "voos": [
+        "TP 36"
+       ]
+      },
+      {
+       "preco": 3976,
+       "companhias": [
+        "Tap Air Portugal"
+       ],
+       "paradas": 1,
+       "escalas": [
+        "LIS"
+       ],
+       "duracao_min": 685,
+       "partida": "2027-05-11 22:55",
+       "chegada": "2027-05-12 15:20",
+       "destino": "MAD",
+       "voos": [
+        "TP 36",
+        "TP 1014"
+       ]
+      },
+      {
+       "preco": 4038,
+       "companhias": [
+        "Tap Air Portugal"
+       ],
+       "paradas": 1,
+       "escalas": [
+        "LIS"
+       ],
+       "duracao_min": 725,
+       "partida": "2027-05-11 22:55",
+       "chegada": "2027-05-12 15:00",
+       "destino": "OPO",
+       "voos": [
+        "TP 36",
+        "TP 1928"
+       ]
+      },
+      {
+       "preco": 4467,
+       "companhias": [
+        "LATAM"
+       ],
+       "paradas": 0,
+       "escalas": [],
+       "duracao_min": 415,
+       "partida": "2027-05-11 06:30",
+       "chegada": "2027-05-11 17:25",
+       "destino": "LIS",
+       "voos": [
+        "LA 8150"
+       ]
+      },
+      {
+       "preco": 5223,
+       "companhias": [
+        "LATAM",
+        "Tap Air Portugal"
+       ],
+       "paradas": 1,
+       "escalas": [
+        "NAT"
+       ],
+       "duracao_min": 895,
+       "partida": "2027-05-11 14:30",
+       "chegada": "2027-05-12 09:25",
+       "destino": "LIS",
+       "voos": [
+        "LA 3869",
+        "TP 4"
        ]
       }
      ],
